@@ -9,7 +9,7 @@ const inter = Inter();
 
 export default function Home() {
   return (
-    <div className={classnames(inter.className, "w-full mb-8")}>
+    <div className={classnames(inter.className, "w-full my-8")}>
       <main className="gap-10 flex flex-col w-full justify-center items-center">
         <section className="text-center m-auto w-full max-w-5xl">
           <h1>Turn Your Audience Into SuperFans</h1>
