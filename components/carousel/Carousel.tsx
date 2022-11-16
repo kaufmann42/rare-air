@@ -1,13 +1,20 @@
 /* eslint-disable jsx-a11y/alt-text */
 import * as THREE from "three";
-import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useEffect, useRef, useState } from "react";
+import {
+  Canvas,
+  MeshBasicMaterialProps,
+  useFrame,
+  useThree,
+} from "@react-three/fiber";
 import {
   useCursor,
   MeshReflectorMaterial,
   Image,
   Text,
   Environment,
+  useVideoTexture,
+  useTexture,
 } from "@react-three/drei";
 import { useRoute, useLocation } from "wouter";
 import { easing } from "maath";
@@ -17,7 +24,7 @@ import { Mesh, BufferGeometry, Material } from "three";
 const GOLDENRATIO = 1.61803398875;
 
 interface IImage {
-  position: number[];
+  position: THREE.Vector3;
   rotation: number[];
   url: string;
 }
@@ -72,7 +79,7 @@ function Frames({
   q?: THREE.Quaternion;
   p?: THREE.Vector3;
 }) {
-  const ref = useRef<THREE.Group>();
+  const ref = useRef<THREE.Group>(null);
   const clicked = useRef<THREE.Object3D<THREE.Event>>();
   const [, params] = useRoute("/item/:id");
   const [, setLocation] = useLocation();
@@ -83,7 +90,7 @@ function Frames({
       clicked.current.parent.localToWorld(p.set(0, GOLDENRATIO / 2, 1.25));
       clicked.current.parent.getWorldQuaternion(q);
     } else {
-      p.set(0, 0, 6.5);
+      p.set(0, 1, 6.5);
       q.identity();
     }
   });
@@ -109,6 +116,19 @@ function Frames({
   );
 }
 
+function VideoMaterial({
+  url,
+  ...props
+}: MeshBasicMaterialProps & { url: string }) {
+  const texture = useVideoTexture(url, {});
+  return <meshBasicMaterial {...props} map={texture} toneMapped={false} />;
+}
+
+function FallbackMaterial({ url }: { url: string }) {
+  const texture = useTexture(url);
+  return <meshBasicMaterial map={texture} toneMapped={false} />;
+}
+
 function Frame({
   url,
   c = new THREE.Color(),
@@ -117,43 +137,10 @@ function Frame({
   url: string;
   c?: THREE.Color;
 }) {
-  const image =
-    useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
-      null
-    );
-  const frame =
-    useRef<THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>(
-      null
-    );
   const [, params] = useRoute("/item/:id");
   const [hovered, hover] = useState(false);
   const [rnd] = useState(() => Math.random());
   const name = getUuid(url);
-  const isActive = params?.id === name;
-  useCursor(hovered);
-  useFrame((state, dt) => {
-    if (!image.current) return;
-    image.current.material.zoom =
-      2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
-    easing.damp3(
-      image.current.scale,
-      [
-        0.85 * (!isActive && hovered ? 0.85 : 1),
-        0.9 * (!isActive && hovered ? 0.905 : 1),
-        1,
-      ],
-      0.1,
-      dt,
-      50
-    );
-    easing.dampC(
-      frame.current?.material.color,
-      hovered ? "orange" : "white",
-      0.1,
-      dt,
-      50
-    );
-  });
   return (
     <group {...props}>
       <mesh
@@ -164,27 +151,9 @@ function Frame({
         position={[0, GOLDENRATIO / 2, 0]}
       >
         <boxGeometry />
-        <meshStandardMaterial
-          color="#151515"
-          metalness={0.5}
-          roughness={0.5}
-          envMapIntensity={2}
-        />
-        <mesh
-          ref={frame}
-          raycast={() => null}
-          scale={[0.9, 0.93, 0.9]}
-          position={[0, 0, 0.2]}
-        >
-          <boxGeometry />
-          <meshBasicMaterial toneMapped={false} fog={false} />
-        </mesh>
-        <Image
-          raycast={() => null}
-          ref={image}
-          position={[0, 0, 0.7]}
-          url={url}
-        />
+        <Suspense fallback={<FallbackMaterial url="assets/imac.png" />}>
+          <VideoMaterial url="assets/video.mov" />
+        </Suspense>
       </mesh>
     </group>
   );

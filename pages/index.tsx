@@ -12,49 +12,61 @@ const pexel = (id: number) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`;
 
 const curve = new THREE.QuadraticBezierCurve3(
-  new THREE.Vector3(-5, 0, 0),
-  new THREE.Vector3(0, 0, -8),
-  new THREE.Vector3(5, 0, 0)
+  new THREE.Vector3(-4.5, 0, 0),
+  new THREE.Vector3(0, 0, -5),
+  new THREE.Vector3(4.5, 0, 0)
 );
 
 const points = curve.getPoints(8);
 
 const images = [
   // Front
-  { position: points[0], rotation: [0, 0, 0], url: pexel(1103970) },
+  {
+    position: points[0],
+    rotation: [0, Math.PI / 4, 0],
+    url: pexel(1103970),
+  },
   // Back
-  { position: points[1], rotation: [0, 0, 0], url: pexel(416430) },
-  { position: points[2], rotation: [0, 0, 0], url: pexel(310452) },
+  {
+    position: points[1],
+    rotation: [0, Math.PI / 4, 0],
+    url: pexel(416430),
+  },
+  {
+    position: points[2],
+    rotation: [0, Math.PI / 4, 0],
+    url: pexel(310452),
+  },
   // Left
   {
     position: points[3],
-    rotation: [0, Math.PI / 2.5, 0],
+    rotation: [0, 0, 0],
     url: pexel(327482),
   },
   {
     position: points[4],
-    rotation: [0, Math.PI / 2.5, 0],
+    rotation: [0, 0, 0],
     url: pexel(325185),
   },
   {
     position: points[5],
-    rotation: [0, Math.PI / 2.5, 0],
+    rotation: [0, 0, 0],
     url: pexel(358574),
   },
   // Right
   {
     position: points[6],
-    rotation: [0, -Math.PI / 2.5, 0],
+    rotation: [0, -Math.PI / 4, 0],
     url: pexel(227675),
   },
   {
     position: points[7],
-    rotation: [0, -Math.PI / 2.5, 0],
+    rotation: [0, -Math.PI / 4, 0],
     url: pexel(911738),
   },
   {
     position: points[8],
-    rotation: [0, -Math.PI / 2.5, 0],
+    rotation: [0, -Math.PI / 4, 0],
     url: pexel(1738986),
   },
 ];
