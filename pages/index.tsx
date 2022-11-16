@@ -2,36 +2,69 @@ import { Inter } from "@next/font/google";
 import Image from "next/image";
 import BGChart from "../components/bgchart/BGChart";
 import classnames from "classnames";
-import { VideoPlayer } from "../components/VideoPlayer";
+import * as THREE from "three";
+import { Carousel } from "../components/carousel/Carousel";
 
 // If loading a variable font, you don&apos;t need to specify the font weight
 const inter = Inter();
 
+const pexel = (id: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`;
+
+const curve = new THREE.QuadraticBezierCurve3(
+  new THREE.Vector3(-5, 0, 0),
+  new THREE.Vector3(0, 0, -8),
+  new THREE.Vector3(5, 0, 0)
+);
+
+const points = curve.getPoints(8);
+
+const images = [
+  // Front
+  { position: points[0], rotation: [0, 0, 0], url: pexel(1103970) },
+  // Back
+  { position: points[1], rotation: [0, 0, 0], url: pexel(416430) },
+  { position: points[2], rotation: [0, 0, 0], url: pexel(310452) },
+  // Left
+  {
+    position: points[3],
+    rotation: [0, Math.PI / 2.5, 0],
+    url: pexel(327482),
+  },
+  {
+    position: points[4],
+    rotation: [0, Math.PI / 2.5, 0],
+    url: pexel(325185),
+  },
+  {
+    position: points[5],
+    rotation: [0, Math.PI / 2.5, 0],
+    url: pexel(358574),
+  },
+  // Right
+  {
+    position: points[6],
+    rotation: [0, -Math.PI / 2.5, 0],
+    url: pexel(227675),
+  },
+  {
+    position: points[7],
+    rotation: [0, -Math.PI / 2.5, 0],
+    url: pexel(911738),
+  },
+  {
+    position: points[8],
+    rotation: [0, -Math.PI / 2.5, 0],
+    url: pexel(1738986),
+  },
+];
+
 export default function Home() {
   return (
-    <div className={classnames(inter.className, "w-full my-8")}>
+    <div className={classnames(inter.className, "w-full")}>
       <main className="gap-10 flex flex-col w-full justify-center items-center">
-        <section className="text-center m-auto w-full max-w-5xl">
-          <h1>Turn Your Audience Into SuperFans</h1>
-          <div className="grid items-end grid-cols-1 lg:grid-cols-6">
-            <div className="col-span-1">
-              <h3>YOU</h3>
-              <p>
-                However, that being said, it is becoming increasingly obvious
-                that our world is developing an unhealthy attachment to it.
-              </p>
-            </div>
-            <VideoPlayer />
-            <div className="col-span-1">
-              <h3>US</h3>
-              <p>
-                However, that being said, it is becoming increasingly obvious
-                that our world is developing an unhealthy attachment to it.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section className="text-center relative pb-20 my-8 w-full max-w-5xl">
+        <Carousel images={images} />
+        <section className="text-center relative pb-20 w-full max-w-5xl">
           <h2>
             We Create Content.
             <br />
